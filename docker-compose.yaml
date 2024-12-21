@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   jobmanager:
-    container_name: confluentinc/cp-flink:1.20.0-cp1-java11
+    container_name: jobmanager
     platform: linux/arm64/v8
     hostname: jobmanager
     image: flink:1.20-java11
@@ -27,7 +27,7 @@ services:
         execution.checkpointing.unaligned.enabled: true
         execution.checkpointing.externalized-checkpoint-retention: DELETE_ON_CANCELLATION
   taskmanager:
-    container_name: taskmanagerconfluentinc/cp-flink:1.20.0-cp1-java11
+    container_name: taskmanager
     platform: linux/arm64/v8
     attach: false
     restart: always
@@ -50,8 +50,6 @@ services:
         taskmanager.memory.framework.off-heap.size: 2700m
         taskmanager.memory.framework.heap.size: 1800m
         taskmanager.memory.jvm-metaspace.size: 1200m
-    links:
-      - db:db
   flink-client:
     build:
       context: .
