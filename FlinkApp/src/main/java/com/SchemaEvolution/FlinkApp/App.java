@@ -1,5 +1,6 @@
 package com.SchemaEvolution.FlinkApp;
 
+import org.json.*;
 import org.apache.flink.table.api.*;
 import org.apache.flink.table.expressions.TimeIntervalUnit;
 import static org.apache.flink.table.api.Expressions.*;
@@ -9,7 +10,9 @@ public class App
     public static void main( String[] args )
     {
         String schema = SchemaRegistryHandler.get_schema("stam-value");
-        System.out.println(schema);
+        JSONObject obj = new JSONObject(schema);
+        System.err.println(obj);
+        // fetch-json node from string
         // EnvironmentSettings settings = EnvironmentSettings.inStreamingMode();
         // TableEnvironment tEnv = TableEnvironment.create(settings);
         
