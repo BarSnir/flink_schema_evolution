@@ -11,9 +11,18 @@ public class App
     {
         String schema = SchemaRegistryHandler.get_schema("stam-value");
         JSONObject obj = new JSONObject(schema);
-        System.err.println(obj);
-        // convert to flink connector schema string
-
+        String converted_sql_schema  = JsonSchemaToFlinkSQL.convert_schema(obj);
+        JSONObject connectorProperties = new JSONObject();
+        connectorProperties.put("connector", "kafka");
+        connectorProperties.put("topic", "transactions");
+        connectorProperties.put("properties.bootstrap.servers", "kafka:9092");
+        connectorProperties.put("format", "csv");
+        String sqlQuery = JsonSchemaToFlinkSQL.wrapCreateTableStatement(
+            "source_topic",
+            converted_sql_schema,
+            connectorProperties
+        );
+        System.out.println(sqlQuery);
         // EnvironmentSettings settings = EnvironmentSettings.inStreamingMode();
         // TableEnvironment tEnv = TableEnvironment.create(settings);
         
