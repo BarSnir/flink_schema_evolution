@@ -1,61 +1,61 @@
 version: '3.8'
 services:
-  jobmanager:
-    container_name: jobmanager
-    platform: linux/arm64/v8
-    hostname: jobmanager
-    image: flink:1.20-java11
-    ports:
-      - "8081:8081"
-    command: jobmanager
-    attach: false
-    restart: always
-    environment:
-      - |
-        FLINK_PROPERTIES=
-        jobmanager.rpc.address: jobmanager
-        jobmanager.memory.process.size: 2500m
-        jobstore.max-capacity: 8
-        jobstore.type: file
-        state.checkpoint-storage: filesystem
-        state.checkpoints.dir: file:///opt/flink/checkpoints
-        state.checkpoints.num-retained: 3
-        execution.checkpointing.interval: 1000
-        execution.checkpointing.min-pause: 500
-        execution.checkpointing.tolerable-failed-checkpoints: 2 
-        execution.checkpointing.timeout: 60000
-        execution.checkpointing.unaligned.enabled: true
-        execution.checkpointing.externalized-checkpoint-retention: DELETE_ON_CANCELLATION
-  taskmanager:
-    container_name: taskmanager
-    platform: linux/arm64/v8
-    attach: false
-    restart: always
-    image: flink:1.20-java11
-    depends_on:
-      - jobmanager
-    command: taskmanager
-    scale: 1
-    environment:
-      - |
-        FLINK_PROPERTIES=
-        jobmanager.rpc.address: jobmanager
-        taskmanager.numberOfTaskSlots: 8
-        parallelism.default: 1
-        taskmanager.memory.process.size: 11500m
-        taskmanager.memory.flink.size: 10000m
-        taskmanager.memory.managed.size: 1500m
-        taskmanager.memory.task.heap.size: 1800m
-        taskmanager.memory.task.off-heap.size: 1000m
-        taskmanager.memory.framework.off-heap.size: 2700m
-        taskmanager.memory.framework.heap.size: 1800m
-        taskmanager.memory.jvm-metaspace.size: 1200m
-  flink-client:
-    build:
-      context: .
-      dockerfile: .Dockerfile
-    environment:
-      - JOB_MANAGER_RPC_ADDRESS=flink-jobmanager
+  # jobmanager:
+  #   container_name: jobmanager
+  #   platform: linux/arm64/v8
+  #   hostname: jobmanager
+  #   image: flink:1.20-java11
+  #   ports:
+  #     - "8081:8081"
+  #   command: jobmanager
+  #   attach: false
+  #   restart: always
+  #   environment:
+  #     - |
+  #       FLINK_PROPERTIES=
+  #       jobmanager.rpc.address: jobmanager
+  #       jobmanager.memory.process.size: 2500m
+  #       jobstore.max-capacity: 8
+  #       jobstore.type: file
+  #       state.checkpoint-storage: filesystem
+  #       state.checkpoints.dir: file:///opt/flink/checkpoints
+  #       state.checkpoints.num-retained: 3
+  #       execution.checkpointing.interval: 1000
+  #       execution.checkpointing.min-pause: 500
+  #       execution.checkpointing.tolerable-failed-checkpoints: 2 
+  #       execution.checkpointing.timeout: 60000
+  #       execution.checkpointing.unaligned.enabled: true
+  #       execution.checkpointing.externalized-checkpoint-retention: DELETE_ON_CANCELLATION
+  # taskmanager:
+  #   container_name: taskmanager
+  #   platform: linux/arm64/v8
+  #   attach: false
+  #   restart: always
+  #   image: flink:1.20-java11
+  #   depends_on:
+  #     - jobmanager
+  #   command: taskmanager
+  #   scale: 1
+  #   environment:
+  #     - |
+  #       FLINK_PROPERTIES=
+  #       jobmanager.rpc.address: jobmanager
+  #       taskmanager.numberOfTaskSlots: 8
+  #       parallelism.default: 1
+  #       taskmanager.memory.process.size: 11500m
+  #       taskmanager.memory.flink.size: 10000m
+  #       taskmanager.memory.managed.size: 1500m
+  #       taskmanager.memory.task.heap.size: 1800m
+  #       taskmanager.memory.task.off-heap.size: 1000m
+  #       taskmanager.memory.framework.off-heap.size: 2700m
+  #       taskmanager.memory.framework.heap.size: 1800m
+  #       taskmanager.memory.jvm-metaspace.size: 1200m
+  # flink-client:
+  #   build:
+  #     context: .
+  #     dockerfile: .Dockerfile
+  #   environment:
+  #     - JOB_MANAGER_RPC_ADDRESS=flink-jobmanager
   zookeeper:
     image: confluentinc/cp-zookeeper:7.8.0
     container_name: zookeeper
