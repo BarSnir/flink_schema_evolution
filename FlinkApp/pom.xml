@@ -7,6 +7,12 @@
   <version>1.0-SNAPSHOT</version>
   <name>FlinkApp</name>
   <url>http://maven.apache.org</url>
+  <repositories>
+    <repository>
+        <id>confluent</id>
+        <url>https://packages.confluent.io/maven/</url>
+    </repository>
+ </repositories>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -26,6 +32,11 @@
       <version>1.20.0</version>
       <scope>provided</scope>
     </dependency>
-
+    <!-- https://mvnrepository.com/artifact/io.confluent/kafka-schema-registry-client -->
+    <dependency>
+        <groupId>io.confluent</groupId>
+        <artifactId>kafka-schema-registry-client</artifactId>
+        <version>7.8.0</version>
+    </dependency>
   </dependencies>
 </project>

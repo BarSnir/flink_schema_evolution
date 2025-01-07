@@ -8,6 +8,8 @@ public class App
 {
     public static void main( String[] args )
     {
+        String schema = SchemaRegistryHandler.get_schema("stam-value");
+        System.out.println(schema);
         // EnvironmentSettings settings = EnvironmentSettings.inStreamingMode();
         // TableEnvironment tEnv = TableEnvironment.create(settings);
         
