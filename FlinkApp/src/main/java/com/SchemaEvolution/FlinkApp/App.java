@@ -12,7 +12,8 @@ public class App
         String schema = SchemaRegistryHandler.get_schema("stam-value");
         JSONObject obj = new JSONObject(schema);
         System.err.println(obj);
-        // fetch-json node from string
+        // convert to flink connector schema string
+
         // EnvironmentSettings settings = EnvironmentSettings.inStreamingMode();
         // TableEnvironment tEnv = TableEnvironment.create(settings);
         
