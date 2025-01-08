@@ -13,6 +13,12 @@
         <url>https://packages.confluent.io/maven/</url>
     </repository>
  </repositories>
+    <properties>
+        <flink.version>1.20.0</flink.version> 
+        <flink.connector.version>3.3.0-1.20</flink.connector.version> 
+        <java.version>11</java.version>
+        <scala.binary.version>2.12</scala.binary.version> 
+    </properties>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -20,23 +26,43 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/org.apache.flink/flink-java -->
-    <dependency>
-        <groupId>org.apache.flink</groupId>
-        <artifactId>flink-java</artifactId>
-        <version>1.20.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.flink</groupId>
-      <artifactId>flink-table-api-java-bridge</artifactId>
-      <version>1.20.0</version>
-      <scope>provided</scope>
-    </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.flink/flink-core -->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-table-api-java</artifactId>
+			<version>${flink.version}</version>
+			<scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-sql-connector-kafka</artifactId>
+            <version>${flink.connector.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-sql-avro</artifactId>
+            <version>${flink.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-sql-avro-confluent-registry</artifactId>
+            <version>${flink.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.36</version> 
+        </dependency>
+
     <!-- https://mvnrepository.com/artifact/io.confluent/kafka-schema-registry-client -->
     <dependency>
         <groupId>io.confluent</groupId>
         <artifactId>kafka-schema-registry-client</artifactId>
         <version>7.8.0</version>
+        <scope>provided</scope>
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.json/json -->
     <dependency>

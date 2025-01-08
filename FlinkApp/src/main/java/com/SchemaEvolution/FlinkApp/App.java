@@ -2,45 +2,23 @@ package com.SchemaEvolution.FlinkApp;
 
 import org.json.*;
 import org.apache.flink.table.api.*;
-import org.apache.flink.table.expressions.TimeIntervalUnit;
-import static org.apache.flink.table.api.Expressions.*;
 
 public class App 
 {
     public static void main( String[] args )
     {
-        String schema = SchemaRegistryHandler.get_schema("stam-value");
-        JSONObject obj = new JSONObject(schema);
-        String converted_sql_schema  = JsonSchemaToFlinkSQL.convert_schema(obj);
-        JSONObject connectorProperties = new JSONObject();
-        connectorProperties.put("connector", "kafka");
-        connectorProperties.put("topic", "transactions");
-        connectorProperties.put("properties.bootstrap.servers", "kafka:9092");
-        connectorProperties.put("format", "csv");
-        String sqlQuery = JsonSchemaToFlinkSQL.wrapCreateTableStatement(
-            "source_topic",
-            converted_sql_schema,
-            connectorProperties
-        );
-        System.out.println(sqlQuery);
-        // EnvironmentSettings settings = EnvironmentSettings.inStreamingMode();
-        // TableEnvironment tEnv = TableEnvironment.create(settings);
+        EnvironmentSettings settings = EnvironmentSettings.inStreamingMode();
+        TableEnvironment tEnv = TableEnvironment.create(settings);
+        String sqlQuerySource = getSqlQuerySource(args);
+        tEnv.executeSql(sqlQuerySource);
+        Table source_topic = tEnv.from(args[0]);
+        source_topic.getResolvedSchema();
         
         // fetch from schema registry AVRO schema
         // detect schema change with curl
         // convert to schema string for kafka connector
         // execute sql source
-        // tEnv.executeSql("CREATE TABLE transactions (\n" +
-        // "    account_id  BIGINT,\n" +
-        // "    amount      BIGINT,\n" +
-        // "    transaction_time TIMESTAMP(3),\n" +
-        // "    WATERMARK FOR transaction_time AS transaction_time - INTERVAL '5' SECOND\n" +
-        // ") WITH (\n" +
-        // "    'connector' = 'kafka',\n" +
-        // "    'topic'     = 'transactions',\n" +
-        // "    'properties.bootstrap.servers' = 'kafka:9092',\n" +
-        // "    'format'    = 'csv'\n" +
-        // ")");
+
         // Update upcoming schema with lower-case
         // move desired compatibility mode 
         // execute sql ingest
@@ -60,15 +38,22 @@ public class App
         // report(transactions).executeInsert("spend_report");
     }
 
-    public static Table report(Table transactions) {
-        return transactions.select(
-                $("account_id"),
-                $("transaction_time").floor(TimeIntervalUnit.HOUR).as("log_ts"),
-                $("amount"))
-            .groupBy($("account_id"), $("log_ts"))
-            .select(
-                $("account_id"),
-                $("log_ts"),
-                $("amount").sum().as("amount"));
+    public static String getSqlQuerySource(String[] args){
+        String schema = SchemaRegistryHandler.get_schema(args[0]+"-value");
+        JSONObject obj = new JSONObject(schema);
+        String converted_sql_schema  = JsonSchemaToFlinkSQL.convert_schema(obj);
+        JSONObject connectorProperties = new JSONObject();
+        connectorProperties.put("connector", "kafka");
+        connectorProperties.put("topic", args[0]);
+        connectorProperties.put("properties.bootstrap.servers", "broker:9092");
+        connectorProperties.put("format", "avro-confluent");
+        connectorProperties.put("value.avro-confluent.url", "http://schema-registry:8082");
+        connectorProperties.put("key.format", "raw");
+        
+        return JsonSchemaToFlinkSQL.wrapCreateTableStatement(
+            args[0],
+            converted_sql_schema,
+            connectorProperties
+        );
     }
 }
